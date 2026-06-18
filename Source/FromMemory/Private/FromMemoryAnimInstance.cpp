@@ -48,11 +48,20 @@ void UFromMemoryAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	FVector Velocity = CharacterRef->GetVelocity();
 	FRotator Rotation = CharacterRef->GetActorRotation();
 	
-	Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, Rotation);
+ 	Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, Rotation);
 	
-	UE_LOG(LogTemp, Warning, TEXT("Movement Direction: %f"), Direction);
-	 
 	// Also update Speed for the BlendSpace
-	 Speed = Velocity.Size();
- 
+	Speed = Velocity.Size();
+	
+	// Get walking value for animation - calling Walking State
+	bIsWalking = CharacterRef->GetIsWalking();
+	
+	
+	
+	bIsCrouching = CharacterRef->GetIsCrouching();
+	/*if (bIsCrouching == true)
+	{
+		CrouchSpeed = Velocity.Size();
+	}*/
+	
 }

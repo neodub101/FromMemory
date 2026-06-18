@@ -52,5 +52,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bShouldEliminate; // Example flag for state changes]
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsWalking;
 	
+	float WalkSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsCrouching;
+	
+	float CrouchSpeed;
 };

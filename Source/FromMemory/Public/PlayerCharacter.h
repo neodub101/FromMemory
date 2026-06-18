@@ -27,6 +27,7 @@ public:
 	
 	APlayerCharacter();
 	
+
 	
 	
 protected:
@@ -65,25 +66,35 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> WalkAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> CrouchAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputMappingContext> FirstPersonContext;
 
-
+	UPROPERTY(BlueprintReadOnly, Category="Movement")
+	bool bIsWalking = false;
 	
 	UPROPERTY(EditAnywhere, Category = "HeadBob")
-	float WalkSpeedThreshold = 1.0f;
+	float WalkSpeedThreshold = 300.0f;
 	 
 	UPROPERTY(EditAnywhere, Category = "HeadBob")
-	float SprintSpeedThreshold = 10.0f;
+	float SprintSpeedThreshold = 599.0f;
 	 
+	
+	
+	
 	// Used to store the current 'active' values during interpolation
 	float BobCurveTime;
 	float CurrentBobFrequency = 0.0f;
 	float CurrentBobAmplitude = 0.0f;
 	
-	
-	float Walkspeed;
+	// Speed set initially for walking
+	float Walkspeed = 0.0f;
 	
 public:	
 	
@@ -105,6 +116,14 @@ public:
 	UFUNCTION()
 	void ResetBob(float DeltaTime);
 	
-	//bool walk() const;
+	/*UFUNCTION()
+	virtual auto Crouch(bool bClientSimulation = false) override;*/
 	
+	UFUNCTION()
+	void Walk(const FInputActionValue& Value);
+	
+	void OnCrouchToggle();
+	
+	bool GetIsCrouching() const { return  bIsCrouched; }
+	bool GetIsWalking() const { return bIsWalking; }
 };

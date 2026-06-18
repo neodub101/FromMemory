@@ -21,6 +21,8 @@ APlayerCharacter::APlayerCharacter()
 	CurrentBobFrequency = 5.0f;
 	CurrentBobAmplitude = 0.0f;
 	
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;     
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 150.f;
 }
 
 // Called when the game starts or when spawned
@@ -54,9 +56,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Walk);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Started, this, &APlayerCharacter::Walk);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &APlayerCharacter::OnCrouchToggle);
+		
+		
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("We are using AdventureCharacter."));
 }
@@ -130,8 +135,8 @@ void APlayerCharacter::HandleHeadBob(float DeltaTime)
 		else
 		{
 			// WALKING: Slow and subtle
-			TargetFreq = 13.5f;
-			TargetAmp = 3.0f;
+			TargetFreq = 4.0f;
+			TargetAmp = 0.8f;
 		}
 	}
 	 
@@ -181,18 +186,38 @@ void APlayerCharacter::HandleHeadBob(float DeltaTime)
 		}
 	}
 
-/*bool APlayerCharacter::walk() const
+/*void APlayerCharacter::Crouch(bool bClientSimulation) override
 {
-	bool walker = false;
-	
-	
-	
-	
- return true;
+	Super::Crouch(bClientSimulation);
 }*/
 
- 
+void APlayerCharacter::Walk(const FInputActionValue& Value)
+{
+	bIsWalking = !bIsWalking;
+	if (bIsWalking)
+	{ 
+		 
+		GetCharacterMovement()->MaxWalkSpeed = 195.f;
+		
+	}
+	else
+	{
+		
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	}
+}
 
-
+void APlayerCharacter::OnCrouchToggle()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	
+    }
+	else
+	{
+		Crouch();
+	}
+}
 
 
