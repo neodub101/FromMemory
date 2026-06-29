@@ -55,6 +55,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bIsWalking;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsProning;
+	
 	float WalkSpeed;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")

@@ -38,7 +38,7 @@ protected:
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	 UCameraComponent* FirstPersonCameraNew;
+	UCameraComponent* FirstPersonCameraNew;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	FName CameraSocketName = FName("camera_jnt");
@@ -74,10 +74,16 @@ protected:
 	TObjectPtr<UInputAction> CrouchAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> ProneAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputMappingContext> FirstPersonContext;
 
 	UPROPERTY(BlueprintReadOnly, Category="Movement")
 	bool bIsWalking = false;
+	
+	UPROPERTY(BlueprintReadOnly, Category="Movement")
+	bool bIsProning = false;
 	
 	UPROPERTY(EditAnywhere, Category = "HeadBob")
 	float WalkSpeedThreshold = 300.0f;
@@ -85,7 +91,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "HeadBob")
 	float SprintSpeedThreshold = 599.0f;
 	 
-	
+	float MaxWalkSpeedRunning = 600.f;
+	float MaxWalkSpeedCrouched = 150.f;
+	float MaxWalkSpeedWalking = 200.f; 
 	
 	
 	// Used to store the current 'active' values during interpolation
@@ -93,8 +101,15 @@ protected:
 	float CurrentBobFrequency = 0.0f;
 	float CurrentBobAmplitude = 0.0f;
 	
+	
 	// Speed set initially for walking
 	float Walkspeed = 0.0f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float MaxWalkSpeedProned = 75.f;
+	
+	
+ 
 	
 public:	
 	
@@ -116,14 +131,24 @@ public:
 	UFUNCTION()
 	void ResetBob(float DeltaTime);
 	
+	UFUNCTION()
+	void UpdateMovementSpeed();
+	
 	/*UFUNCTION()
 	virtual auto Crouch(bool bClientSimulation = false) override;*/
 	
 	UFUNCTION()
 	void Walk(const FInputActionValue& Value);
 	
+	UFUNCTION()
+	void Prone();
+	
+	
 	void OnCrouchToggle();
 	
 	bool GetIsCrouching() const { return  bIsCrouched; }
+	
 	bool GetIsWalking() const { return bIsWalking; }
+	
+	bool GetIsProning() const { return bIsProning; }
 };

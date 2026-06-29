@@ -2,6 +2,9 @@
 
 
 #include "PlayerCharacter.h"
+
+#include <shlwapi.h>
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "Camera/CameraComponent.h"
@@ -22,7 +25,9 @@ APlayerCharacter::APlayerCharacter()
 	CurrentBobAmplitude = 0.0f;
 	
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;     
-	GetCharacterMovement()->MaxWalkSpeedCrouched = 150.f;
+	//GetCharacterMovement()->MaxWalkSpeedCrouched = 150.f;
+	
+	
 }
 
 // Called when the game starts or when spawned
@@ -60,7 +65,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Started, this, &APlayerCharacter::Walk);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &APlayerCharacter::OnCrouchToggle);
-		
+		EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &APlayerCharacter::Prone);
 		
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("We are using AdventureCharacter."));
@@ -186,6 +191,27 @@ void APlayerCharacter::HandleHeadBob(float DeltaTime)
 		}
 	}
 
+void APlayerCharacter::UpdateMovementSpeed()
+{
+	if (bIsProning)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeedProned;
+	}
+	else if (bIsCrouched) // engine-replicated, same as your existing crouch logic
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeedCrouched;
+	}
+	else if (bIsWalking) // your existing walk toggle bool
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeedWalking;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeedRunning;
+	}
+	
+}
+
 /*void APlayerCharacter::Crouch(bool bClientSimulation) override
 {
 	Super::Crouch(bClientSimulation);
@@ -193,31 +219,55 @@ void APlayerCharacter::HandleHeadBob(float DeltaTime)
 
 void APlayerCharacter::Walk(const FInputActionValue& Value)
 {
-	bIsWalking = !bIsWalking;
+	/*bIsWalking = !bIsWalking;
 	if (bIsWalking)
 	{ 
+	*/
 		 
-		GetCharacterMovement()->MaxWalkSpeed = 195.f;
+		bIsWalking = !bIsWalking;
+		UpdateMovementSpeed();
 		
-	}
+	/*}*/
+	/*else
+	{
+		
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	}*/
+}
+
+void APlayerCharacter::Prone()
+{
+	bIsProning = !bIsProning;
+	
+	UpdateMovementSpeed();
+	
+	/*
 	else
 	{
 		
 		GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	}
-}
+	*/
+	 
+	
+	
+ }
 
 void APlayerCharacter::OnCrouchToggle()
 {
+	
 	if (bIsCrouched)
 	{
 		UnCrouch();
+ 
 	
     }
-	else
+	else 
 	{
 		Crouch();
+		UpdateMovementSpeed();
 	}
+
 }
 
 

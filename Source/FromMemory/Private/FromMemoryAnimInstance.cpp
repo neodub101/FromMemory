@@ -56,12 +56,20 @@ void UFromMemoryAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	// Get walking value for animation - calling Walking State
 	bIsWalking = CharacterRef->GetIsWalking();
 	
-	
+	bIsProning = CharacterRef->GetIsProning();
 	
 	bIsCrouching = CharacterRef->GetIsCrouching();
 	/*if (bIsCrouching == true)
 	{
 		CrouchSpeed = Velocity.Size();
 	}*/
-	
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,                                   // key: -1 = new message each call, stacks
+			.4f,                                  // duration in seconds
+			FColor::Yellow,
+			FString::Printf(TEXT("Speed: %.1f (Crouched: %s)"), Speed, bIsCrouching ? TEXT("Yes") : TEXT("No"))
+		);
+	}
 }
